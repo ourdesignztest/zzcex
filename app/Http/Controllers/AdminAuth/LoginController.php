@@ -31,5 +31,16 @@ class LoginController extends Controller
    {
        return view('admin.login');
    }
+
+
+    public function logout(Request $request)
+    {
+      
+        Auth::guard('admin')->logout();
+        $request->session()->flush();
+        $request->session()->regenerate();
+        return Redirect::to('/admin_home');
+
+    }
 }
 

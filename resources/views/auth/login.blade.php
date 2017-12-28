@@ -1,6 +1,13 @@
-@extends('layouts.app')
-
-@section('content')
+@extends('layouts.main')
+@section('title')
+{{Lang::get('frontend_texts.member_login')}}
+@stop
+@section('body')
+<script type="text/javascript">
+ var RecaptchaOptions = {
+    theme : 'clean'
+ };
+ </script>
 <div class="container">
     <div class="row">
         <div class="col-md-8 col-md-offset-2">
@@ -8,7 +15,7 @@
                 <div class="panel-heading">Login</div>
 
                 <div class="panel-body">
-                    <form class="form-horizontal" method="POST" action="{{ route('login') }}">
+                    <form class="form-horizontal" method="POST" action="{{ url('user/login') }}">
                         {{ csrf_field() }}
 
                         <div class="form-group{{ $errors->has('email') ? ' has-error' : '' }}">
@@ -55,7 +62,7 @@
                                     Login
                                 </button>
 
-                                <a class="btn btn-link" href="{{ route('password.request') }}">
+                                <a class="btn btn-link" href="{{ url('password.request') }}">
                                     Forgot Your Password?
                                 </a>
                             </div>
@@ -66,4 +73,11 @@
         </div>
     </div>
 </div>
-@endsection
+@stop
+@section('script.footer')
+@parent
+{{ HTML::script('assets/js/jquery.validate.min.js') }}
+<script type="text/javascript">
+ 
+@stop
+

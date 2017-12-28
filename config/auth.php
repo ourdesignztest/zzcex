@@ -72,7 +72,7 @@ return [
     'providers' => [
         'users' => [
             'driver' => 'eloquent',
-            'model' => App\User::class,
+            'model' => App\Models\User::class,
         ],
 
         // 'users' => [
@@ -83,7 +83,7 @@ return [
            //Seller user provider
         'admins' => [
             'driver' => 'eloquent',  //We are using eloquent model
-            'model' => App\User::class,
+            'model' => App\Models\User::class,
         ],
     ],
 
