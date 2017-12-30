@@ -1,7 +1,4 @@
 <!-- Fixed navbar -->
-
-
-<?php $btc_usd = 0; $ltc_usd = 0;?>
     <nav class="navbar navbar-default navbar-fixed-top dash-navbar-top dnl-visible">
       <div class="container-sm">
         <div class="navbar-header">
@@ -48,6 +45,10 @@
               <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><img src="http://www.gravatar.com/avatar/<?php echo md5( strtolower( trim(Auth::user()->email)) ); ?>" height="33px" border="0" style="border-radius:60px;" /> {{trans('user_texts.hello')}} {{Auth::user()->username}} <span class="caret"></span></a>
               <ul class="dropdown-menu" role="menu">
                       <li @if(Request::is('user/profile/dashboard')) {{'class="active"'}} @endif>{{ HTML::link('user/profile/dashboard', trans('user_texts.dashboard')) }}</li>
+
+                      <li @if(Request::is('user/profile/dashboard')) {{'class="active"'}} @endif>{{ HTML::link('user/profile/dashboard', trans('user_texts.Admin panel')) }}</li>
+
+
                       <li @if(Request::is('user/profile/verify')) {{'class="active"'}} @endif>{{ HTML::link('user/profile/verify', trans('user_texts.verify_account')) }}</li>
                       <li @if(Request::is('user/profile')) {{'class="active"'}} @endif>{{ HTML::link('user/profile', trans('user_texts.profile')) }}</li>
                       <li @if(Request::is('user/profile/two-factor-auth')) {{'class="active"'}} @endif>{{ HTML::link('user/profile/two-factor-auth', trans('user_texts.security')) }}</li>

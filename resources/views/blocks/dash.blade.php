@@ -3,8 +3,6 @@
 <li class="title"><span class="name">COIN</span><span class="price">PRICE</span><span class="change">CHANGE</span></li>
 
 
-
-@if(!empty($btc_markets))
 @foreach($btc_markets as $btc_market)
 <?php
 	$total_btc = isset($btc_datainfo[$btc_market->id]['total'])? $btc_datainfo[$btc_market->id]['total']:0;
@@ -23,15 +21,13 @@
 	@endif</a>
 	</li>
 @endforeach
-@endif
+
 </ul>
 <div class="dashhead"><img src="{{ asset('assets/img/ltc.png') }}" border="0" height="50px" style="display: inline-block;" /> <h2>LTC Markets</h2></div>
 <ul class="market dnl-nav">
 <li class="title"><span class="name">COIN</span><span class="price">PRICE</span><span class="change">CHANGE</span></li>
 
-<?php  $ltc_markets = []; ?>
 
-@if(!empty($ltc_markets))
 	@foreach($ltc_markets as $ltc_market)
 	<?php
 		$total_ltc = isset($ltc_datainfo[$ltc_market->id]['total'])? $ltc_datainfo[$ltc_market->id]['total']:0;
@@ -48,7 +44,7 @@
 		@endif</a>
 		</li>
 	@endforeach
-@endif
+
 </ul>
 <?php
 $number_btc = isset($statistic_btc->number_trade)? $statistic_btc->number_trade:0;

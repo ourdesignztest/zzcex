@@ -24,12 +24,16 @@ use Illuminate\Support\Facades\Input;
 use Mail;
 use Illuminate\Support\Facades\Validator;
 
+use Authy;
+use Config;
 
 class AuthController extends Controller {
 	private $authy;
 
     public function __construct()
     {
+
+  
 		// production
 		//$this->authy = new Authy\AuthyApi(Config::get('auth.authy'));
 
@@ -73,8 +77,15 @@ class AuthController extends Controller {
 
     public function ajVerifyToken()
     {
-        die('here');
+       
+
+         
+      //  $verification = $this->authy->verifyToken(Input::get('authy_id'), Input::get('token'), array('force' => 'true'));
+         
         $verification = $this->authy->verifyToken(Input::get('authy_id'), Input::get('token'), array('force' => 'true'));
+         
+        print_r($verification);
+        die;
 
         if($verification->ok()) {
             echo json_encode(array('status'=>'success'));

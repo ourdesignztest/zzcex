@@ -1,9 +1,8 @@
 <?php
 
-
 namespace App\Http\Controllers;
-
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redirect;
 use App\Models\User;
 use App\Models\Setting;
 use App\Models\Wallet;
@@ -14,6 +13,7 @@ use App\Models\Order;
 use App\Models\FeeTrade;
 use App\Models\Trade;
 use App\Models\Post;
+use App\Models\FeeWithdraw;
 use App\Models\WalletLimitTrade;
 use Session;
 use DB;
@@ -38,6 +38,7 @@ class HomeController extends Controller {
     */
     public function getJsonFeed($from_to='btc_usd')
     {
+        
         if($feed = @file_get_contents('https://btc-e.com/api/2/'.$from_to.'/ticker')){
             $ticker=json_decode($feed, true);
             return $ticker['ticker'];
@@ -46,9 +47,10 @@ class HomeController extends Controller {
             return array('last'=>0);
         }
     }
-    public function index($market_id=''){   
 
-    
+
+
+    public function index($market_id=''){   
         $setting = new Setting;
         $wallet = new Wallet();
         $m = Market::where('active',1)->orderBy('id')->first();
@@ -213,11 +215,9 @@ class HomeController extends Controller {
         }
         $data['wallets']=Wallet::orderby('type')->get();
 
-
-    
-
         return View::make('home',$data);
     }
+    
     
     public function routePage($page=''){
         //echo "<pre>user: "; print_r(Confide::user() ); echo "</pre>";

@@ -2,10 +2,15 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\User;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\RegistersUsers;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redirect;
+
+use App\Models\User;
+use App\Models\Post;
+use Mail;
 
 class RegisterController extends Controller
 {
@@ -48,10 +53,12 @@ class RegisterController extends Controller
     protected function validator(array $data)
     {
         return Validator::make($data, [
-            'name' => 'required|string|max:255',
+            'firstname' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:6|confirmed',
+            'username' => 'required|string',
         ]);
+
+      
     }
 
     /**
@@ -62,10 +69,79 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
-        return User::create([
+       /* return User::create([
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => bcrypt($data['password']),
-        ]);
+        ]);*/
+
+        die('here');
     }
+
+
+
+    public function store(Request $request)
+    {
+
+        $this->validator($request->all())->validate();
+        $user = new User;
+        $user->firstname = $request->get( 'firstname' );
+        $user->lastname = $request->get('lastname' );
+        $user->username = $request->get('username' );
+        $user->email = $request->get('email' );
+        $pass = $user->email.time();
+
+        $password = md5($pass);
+        $user->password = bcrypt($password);
+
+        $user->referral = $request->get( 'referral' );
+        $user->banned = 0;
+
+        //$user->password_confirmation = $password;
+        $user->confirmation_code = $password;
+        $trade_key = md5($user->username.$user->email.time());
+        $user->trade_key = $trade_key;
+       // $user->ip_lastlogin=$this->get_client_ip();
+        $user->ip_lastlogin='182.73.233.42';
+        // Save if valid. Password field will be hashed before save
+        $user->save();
+
+        if ( $user->id )
+        {
+           //Add user role user table.
+            $user->addRole('User');
+       
+            //FOR VERIFY EMAIL
+            
+            $data_send=array('user' => $user);
+            $message ="Testing!!";
+            Mail::send('emails.confirmEmail', $data_send, function($message) use ($user)
+            {
+              $message->to($user->email)->subject('Account Confirmation');
+
+            });
+
+            $data_send=array('user' => $user,'password'=>$password);
+            $message ="Testing!!";
+
+            //FOR SEND PASSWORD
+            Mail::send('emails.sendpass', $data_send, function($message) use ($user)
+            {
+              $message->to($user->email)->subject('Your Password');
+
+            });
+
+            $notice ="Please verify your account";
+            // Redirect with success message
+            return Redirect::action('UserController@login')->with('notice', $notice);
+        }
+        
+    }
+
+
+
+
+
+
+
 }

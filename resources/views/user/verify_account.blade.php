@@ -19,7 +19,8 @@
             {{ Session::get('notice') }}
         </div>
     @endif   
-    <form id="registerForm" method="POST" action="{{ url('UserController@addInfoVerify') ?: URL::to('/user/add-infoverify') }}" enctype="multipart/form-data">    
+    <form id="registerForm" method="POST" action="{{url('/user/add-infoverify')}}" enctype="multipart/form-data">  
+     {{ csrf_field() }}  
     <h3>{{Lang::get('user_texts.where_you')}}</h3>
     <table class="table register">
         <tbody>

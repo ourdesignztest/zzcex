@@ -28,7 +28,8 @@
 		    @endif
 		    @if($wallet->enable_withdraw)
 		    	@if(!$wallet->is_moneypaper)
-			    	<form id="wihtdrawForm" class="form-horizontal" method="POST" action="{{ url('UserController@doWithdraw') ?: URL::to('/user/withdraw') }}">
+			    	<form id="wihtdrawForm" class="form-horizontal" method="POST" action="{{ url('/user/withdraw') }}">
+			    	    {{ csrf_field() }}
 				    	<div style="color:red">@if(isset($error_message)) {{$error_message}} @endif</div>
 					    <!-- <div class="warning box">Once submitted, all requests <strong>MUST</strong> be confirmed via email. Please only contact support if you have not received the confirmation email.</div> -->
 					    <p>{{Lang::get('user_texts.your_current_available')}} {{$current_coin}} {{Lang::get('user_texts.balance')}}: <strong>{{$balance}}</strong></p>

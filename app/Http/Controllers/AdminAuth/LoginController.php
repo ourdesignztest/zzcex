@@ -9,13 +9,15 @@ use Illuminate\Foundation\Auth\AuthenticatesUsers;
 //Auth facade
 use Auth;
 
+use App\Models\User;
+
 class LoginController extends Controller
 {
      //Trait
     use AuthenticatesUsers;
 
     //Where to redirect seller after login.
-    protected $redirectTo = '/admin_home';
+    protected $redirectTo = 'admin/admin_home';
 
     //Trait
     use AuthenticatesUsers;
@@ -35,12 +37,33 @@ class LoginController extends Controller
 
     public function logout(Request $request)
     {
-      
         Auth::guard('admin')->logout();
         $request->session()->flush();
         $request->session()->regenerate();
-        return Redirect::to('/admin_home');
-
+        return redirect('admin/admin_home');
     }
+
+
+    public function login(Request $request)
+    {
+        $email = $request->get('email');
+        $password = $request->get('password');
+  
+        if(Auth::guard('admin')->attempt(['email' => $email, 'password' => $password]))
+        { 
+            $user_id = Auth::guard('admin')->user()->id; 
+           
+            if(User::find($user_id)->hasRole('Admin'))
+              { 
+                  return redirect('admin/admin_home');
+              }else {
+                die('password incorrect');
+              }
+
+          }else{
+          die('not!!!');
+          }
+    }
+
 }
 

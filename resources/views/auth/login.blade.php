@@ -1,13 +1,8 @@
 @extends('layouts.main')
 @section('title')
-{{Lang::get('frontend_texts.member_login')}}
+{{Lang::get('frontend_texts.open_account')}}
 @stop
 @section('body')
-<script type="text/javascript">
- var RecaptchaOptions = {
-    theme : 'clean'
- };
- </script>
 <div class="container">
     <div class="row">
         <div class="col-md-8 col-md-offset-2">
@@ -73,11 +68,4 @@
         </div>
     </div>
 </div>
-@stop
-@section('script.footer')
-@parent
-{{ HTML::script('assets/js/jquery.validate.min.js') }}
-<script type="text/javascript">
- 
-@stop
-
+@endsection

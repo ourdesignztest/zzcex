@@ -67,6 +67,7 @@
 			    <div class="panel-heading bg-lightBlue fg-white">{{{ trans('user_texts.create_deposit')}}}</div>
 			    <div class="panel-body">
 			    	<form id="notifyDeposit" class="form-horizontal" method="POST" action="{{{ URL::to('/user/notify-deposit') }}}">
+			    	    {{ csrf_field() }}
 						<p>{{Lang::get('user_texts.note_deposit_currency')}}</p>
 						<div style="color:red" id="message_errors"></div>
 					    @if ( Session::get('error') )

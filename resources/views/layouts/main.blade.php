@@ -6,10 +6,16 @@
 <head>
     <meta charset="utf-8">
     <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+
+     <!-- CSRF Token -->
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta http-equiv="X-Frame-Options" content="sameorigin">
     <meta http-equiv="Cache-control" content="no-store">
+
     <META HTTP-EQUIV="PRAGMA" CONTENT="NO-CACHE">
+
     <title>ZZC Exchange @yield('title')</title>
 
     <meta name="description" content="">
@@ -34,21 +40,21 @@
         App.assetURL = '{{ URL::to("assets") }}';
     </script>
 
+ 
     <!-- jQuery -->
     <script src="{{ asset('assets/vendors/jquery-1.11.1.min.js') }}"></script>
 
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    <script>
-        $.ajaxSetup({
-        headers: {
-        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        }
-        });  
+   <script>
+    $.ajaxSetup({
+    headers: {
+    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    }
+    });
     </script>
 
 
-    {{--<script src="{{ asset('assets/js/jquery-1.10.2.min.js') }}"></script>--}}
-     {{--<script>window.jQuery || document.write('<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"><\/script>')</script>--}}
+   <!--  {{--<script src="{{ asset('assets/js/jquery-1.10.2.min.js') }}"></script>--}}
+     {{--<script>window.jQuery || document.write('<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"><\/script>')</script>--}} -->
     @yield('script.header')
 
 

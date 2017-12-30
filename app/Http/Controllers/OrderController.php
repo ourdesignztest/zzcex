@@ -21,6 +21,7 @@ use Auth;
 use HTML;
 use Config;
 use Cookie;
+use Illuminate\Support\Facades\Input;
 
 
 class OrderController extends Controller {

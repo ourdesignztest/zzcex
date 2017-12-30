@@ -26,7 +26,7 @@ class RedirectIfAdminAuthenticated
       //If request comes from logged in seller, he will
       //be redirected to seller's home page.
       if (Auth::guard('admin')->check()) {
-          return redirect('/admin_home');
+          return redirect('admin/admin_home');
       }
       return $next($request);
     }

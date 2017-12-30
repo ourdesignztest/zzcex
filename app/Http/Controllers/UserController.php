@@ -39,8 +39,9 @@ use Illuminate\Support\Facades\Input;
 use Mail;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
-
-
+use Illuminate\Support\Facades\Hash;
+use Lang;
+use Illuminate\Routing\UrlGenerator;
 
 
 //session_start();
@@ -87,14 +88,11 @@ class UserController extends Controller {
      */
     public function create($referral='')
     {
-     // if( Confide::user() )
-      $a ='';
-     if(!empty($a))
+     if(Auth::user())
       {
-
-          // If user is logged, redirect to internal
-          // page, change it to '/admin', '/dashboard' or something
-          return Redirect::to('user/profile/dashboard');
+        // If user is logged, redirect to internal
+        // page, change it to '/admin', '/dashboard' or something
+        return Redirect::to('user/profile/dashboard');
       }
       else
       {
@@ -103,93 +101,10 @@ class UserController extends Controller {
         $data['recaptcha_publickey']=$recaptcha_publickey;
         if($referral!='') $data['referral'] = $referral;
         //return View::make(Config::get('confide::signup_form'), $data);
-       return View::make('auth.register',compact('data'));
+        return View::make('auth.register',compact('data'));
       }
     }
 
-    /**
-     * Stores new account
-     *
-     */
-    public function store(Request $request)
-    {
-        $this->validator($request->all())->validate();
-       /* $user = new User;
-        $user->firstname = Input::get( 'firstname' );
-        $user->lastname = Input::get( 'lastname' );
-        $user->username = Input::get( 'username' );
-        $user->email = Input::get( 'email' );
-        $pass = $user->email.time();
-        $password = md5($pass);
-        $user->password = $password;
-        $user->referral = Input::get( 'referral' );
-        $user->banned = 0;
-        $user->confirmation_code = $password;
-        $trade_key = md5($user->username.$user->email.time());
-        $user->trade_key = $trade_key;
-        $user->ip_lastlogin='112.196.24.36';
-        $user->save();*/
-
-        $user = new User;
-        $user->firstname = Input::get( 'firstname' );
-        $user->lastname = Input::get( 'lastname' );
-        $user->username = Input::get( 'username' );
-        $user->email = Input::get( 'email' );
-
-        $pass = $user->email.time();
-        $password = md5($pass);
-        $user->password = $password;
-        $user->referral = Input::get( 'referral' );
-        $user->banned = 0;
-        // The password confirmation will be removed from model
-        // before saving. This field will be used in Ardent's
-        // auto validation.
-        //$user->password_confirmation = $password;
-        $user->confirmation_code = $password;
-        $trade_key = md5($user->username.$user->email.time());
-        $user->trade_key = $trade_key;
-       // $user->ip_lastlogin=$this->get_client_ip();
-        $user->ip_lastlogin='182.73.233.42';
-        // Save if valid. Password field will be hashed before save
-        $user->save();
-
-
-        if ( $user->id )
-        {
-            //Add user role user table.
-            $user->addRole('User');
-            //$notice = Lang::get('confide.alerts.account_created') . ' ' . Lang::get('confide.alerts.instructions_sent');
-            $data_send=array('user' => $user,'password'=>$password);
-            $message ="Testing!!";
-            Mail::send('emails.sendpass', $data_send, function($message) use ($user)
-            {
-              $message->to($user->email)->subject('Your Password');
-
-            });
-
-            $notice ="Please verify your account";
-            // Redirect with success message
-            return Redirect::action('UserController@login')->with('notice', $notice);
-        }
-        else
-        {
-            // Get validation errors (see Ardent package)
-            $error = $user->errors()->all(':message');
-            return Redirect::to('user/register')->withInput(Input::except('password'))->with( 'error', $error );
-        }
-    }
-
-
-
-    protected function validator(array $data)
-    {
-        return Validator::make($data, [
-            'firstname' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'lastname' => 'required|string|max:255',
-            'username' => 'required|string',
-        ]);
-    }
 
     /**
      * Displays the login form
@@ -197,7 +112,6 @@ class UserController extends Controller {
      */
     public function login()
     {
-
         $user = [];
         if(!empty($user))
         {
@@ -207,13 +121,12 @@ class UserController extends Controller {
         }
         else
         {
-
          $setting = new Setting();
          $recaptcha_publickey = $setting->getSetting('recaptcha_publickey','');
-
          $data['recaptcha_publickey']=$recaptcha_publickey;
+
          //return View::make(Config::get('confide::login_form'), $data);
-         return View::make('auth.login');
+         return View::make('auth.login',compact('data'));
          
         }
     }
@@ -292,17 +205,12 @@ class UserController extends Controller {
     {
         
         $input = array(
-            'email'    => Input::get( 'email' ), // May be the username too
-            'password' => Input::get( 'password' )
+        'email'    => Input::get( 'email' ), // May be the username too
+        'password' => Input::get( 'password' )
         );
 
-         $a =   Auth::guard("web")->attempt(['email' => $input['email'], 'password' => $input['password']]);
-
-         print_r($a);
-         die;
         if (Auth::guard("web")->attempt(['email' => $input['email'], 'password' => $input['password']]))
         {
-
 
             die('here2233');
             // Redirect the user to the URL they were trying to access before
@@ -331,7 +239,7 @@ class UserController extends Controller {
         {
             
 
-            die('here');
+            die('hereddddd');
 
         /*    $user = new User;
 
@@ -366,15 +274,15 @@ class UserController extends Controller {
      */
     public function confirm( $code )
     {
-        if ( Confide::confirm( $code ) )
+        if (!empty(User::where('confirmation_code',$code)->get()))
         {
-            $notice_msg = Lang::get('confide::confide.alerts.confirmation');
+            $notice_msg = "Your account has been confirmed! You may now login.";
                         return Redirect::action('UserController@login')
                             ->with( 'notice', $notice_msg );
         }
         else
         {
-            $error_msg = Lang::get('confide::confide.alerts.wrong_confirmation');
+            $error_msg = "Wrong confirmation code.";
                         return Redirect::action('UserController@login')
                             ->with( 'error', $error_msg );
         }
@@ -417,7 +325,7 @@ class UserController extends Controller {
         else
         {
             $error_msg = Lang::get('confide::confide.alerts.wrong_password_forgot');
-                        return Redirect::action('UserController@forgot_password')
+                         return Redirect::action('UserController@forgot_password')
                             ->withInput()
                 ->with( 'error', $error_msg );
         }
@@ -481,10 +389,14 @@ class UserController extends Controller {
      */
     public function checkCaptcha()
     {
+       
         require app_path().'/libraries/recaptchalib.php';
+
         $setting = new Setting();
+
         $publickey = $setting->getSetting('recaptcha_publickey','');// "6LeoOPASAAAAAPsHsCBdbM60dEBKVDydRItjlmHR"; // you got this from the signup page
         $privatekey = $setting->getSetting('recaptcha_privatekey','');//"6LeoOPASAAAAAB_fPJ0h5iOmwp5p-lqldnLk0zjY";
+
         if ($_GET["recaptcha_response_field"]) {
             $resp = recaptcha_check_answer ($privatekey,
                                             $_SERVER["REMOTE_ADDR"],
@@ -505,25 +417,34 @@ class UserController extends Controller {
     }
 
     public function updateSetting(){
+        
         $update= array('timeout'=>Input::get('timeout'),'updated_at'=>date("Y-m-d H:i:s"));
         $firstname = Input::get('firstname');
         $lastname = Input::get('lastname');
         $password = Input::get('password');
+
         //$password2 = Input::get('password2');
-        $user = User::find((int)Confide::user()->id);
-        if($password!='' && !Hash::check($password, Confide::user()->password)) {
+       /* $user = User::find((int)Confide::user()->id);*/
+         $user = User::find((int)Auth::user()->id);
+
+        if($password!='' && !Hash::check($password, Auth::user()->password)) {
             $update['password'] = Hash::make($password);
         }
         if(!empty($firstname)) $update['firstname'] = $firstname;
         if(!empty($lastname)) $update['lastname'] = $lastname;
 
         User::where('id', $user->id)->update($update);
-        return Redirect::action('UserController@viewProfile')
-                            ->with( 'notice', "Profile updated successfully." );
+
+       /* return Redirect::action('UserController@viewProfile')
+                            ->with( 'notice', "Profile updated successfully." );*/
+        return back() ->with( 'notice', "Profile updated successfully." );
+
+
     }
 
     public function addInfoVerify(){
-        $user=Confide::user();
+       // $user=Confide::user();
+        $user=Auth::user();
         $userinfo=UserInformation::where('user_id',$user->id)->first();
         if(!isset($userinfo->user_id)) $userinfo=new UserInformation();
         $userinfo->user_id = $user->id;
@@ -551,6 +472,7 @@ class UserController extends Controller {
                 return Redirect::to('user/profile/verify')->with('error', Lang::get('messages.extension_invalid'));
             }
         }
+
         if(!empty($government_photo_2)){
             $extension = $government_photo_2->getClientOriginalExtension();
             $destinationPath = 'upload/images/';
@@ -579,10 +501,11 @@ class UserController extends Controller {
         $userinfo->save();
         return Redirect::to('user/profile/verify')->with('notice', Lang::get('messages.update_success'));
     }
+
+
+
     public function viewprofile($page='',$filter=''){ 
-
         $user_id = Auth::user()->id;
-
         $data = array();
         $data['user_id'] = $user_id;
         $data['user'] = Auth::user();
@@ -1058,9 +981,10 @@ class UserController extends Controller {
                             ->with( 'notice', 'Sorry. Withdrawals are currently paused.' ); //"Not connect to this wallet."
         }
 
-        $user = Confide::user();
+       // $user = Confide::user();
+        $user = Auth::user();
         $balance = new Balance();
-        if(Hash::check($password, Confide::user()->password)) {
+        if(Hash::check($password, Auth::user()->password)) {
             $balance_amount = $balance->getBalance($wallet->id);
             $fee_withdraw = new FeeWithdraw();
             $fee=$fee_withdraw->getFeeWithdraw($wallet->id);

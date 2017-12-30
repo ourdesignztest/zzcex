@@ -21,7 +21,8 @@
 <div class="panel panel-default">
   <div class="panel-heading bg-lightBlue fg-white"><h2 class="panel-title"><i class="fa fa-cog"></i> {{Lang::get('user_texts.your_details')}}</h2></div>
   <div class="panel-body text-center">
-    <form id="registerForm" method="POST" action="">
+    <form id="registerForm" method="POST" action="{{ url('/user/update-setting') }}">
+     {{ csrf_field() }}
     <table class="table register">
         <tbody>
             <tr>
@@ -33,7 +34,7 @@
                 <td><input type="text" value="{{$profile['lastname']}}" id="lastname" name="lastname" class="form-control" required="" minlength="2" class="valid"></td>
             </tr>
             <tr>
-                <th>confide email</th>
+                <th>{{{ Lang::get('confide::confide.e_mail') }}}</th>
                 <td><strong>{{$profile['email']}}</strong><br>
                 <span><em>{{Lang::get('user_texts.note_change_email')}}</em></span></td>
             </tr>
@@ -60,12 +61,12 @@
     <table class="table register">
         <tbody>
             <tr>
-                <th style="width:180px;">confide password</th>
+                <th style="width:180px;">{{{ Lang::get('confide::confide.password') }}}</th>
                 <td><input type="password" autocomplete="off" value="" class="form-control" id="password" name="password"><br>
                 <span>{{Lang::get('user_texts.note_input_pass')}}</span></td>
             </tr>
             <tr>
-                <th>confide password_confirmation</th>
+                <th>{{{ Lang::get('confide::confide.password_confirmation') }}}</th>
                 <td><input type="password" autocomplete="off" value="" class="form-control" id="password2" name="password2"><br>
                 <span>{{Lang::get('user_texts.note_input_pass2')}}</span></td>
             </tr>

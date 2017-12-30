@@ -91,6 +91,11 @@
         $.ajax({
             url:"<?php echo action('HomeController@getChart')?>",
             type:'post',
+              headers : { 
+    'X-CSRF-TOKEN' : $('meta[name="csrf-token"]').attr('content')
+    }, 
+
+
             dataType:'json',
             data: {Ajax:1,timeSpan:timeSpan_,market_id:<?php echo $market_id ?>},
             cache:false,
@@ -200,6 +205,9 @@
                     $.ajax({
                         url:"<?php echo action('HomeController@getChart')?>",
                         type:'post',
+                          headers : { 
+    'X-CSRF-TOKEN' : $('meta[name="csrf-token"]').attr('content')
+    }, 
                         dataType:'json',
                         data: {Ajax:1,timeSpan:'1 day',market_id:<?php echo $market_id ?>},
                         cache:false,
@@ -230,6 +238,9 @@
                     $.ajax({
                         url:"<?php echo action('HomeController@getChart')?>",
                         type:'post',
+                          headers : { 
+    'X-CSRF-TOKEN' : $('meta[name="csrf-token"]').attr('content')
+    }, 
                         dataType:'json',
                         data: {Ajax:1,timeSpan:'7 day',market_id:<?php echo $market_id ?>},
                         cache:false,
@@ -263,6 +274,9 @@
                     $.ajax({
                         url:"<?php echo action('HomeController@getChart')?>",
                         type:'post',
+                          headers : { 
+    'X-CSRF-TOKEN' : $('meta[name="csrf-token"]').attr('content')
+    }, 
                         dataType:'json',
                         data: {Ajax:1,timeSpan:'1 month',market_id:<?php echo $market_id ?>},
                         cache:false,
@@ -296,6 +310,9 @@
                     $.ajax({
                         url:"<?php echo action('HomeController@getChart')?>",
                         type:'post',
+                          headers : { 
+    'X-CSRF-TOKEN' : $('meta[name="csrf-token"]').attr('content')
+    }, 
                         dataType:'json',
                         data: {Ajax:1,timeSpan:'3 month',market_id:<?php echo $market_id ?>},
                         cache:false,
@@ -329,6 +346,9 @@
                     $.ajax({
                         url:"<?php echo action('HomeController@getChart')?>",
                         type:'post',
+                          headers : { 
+    'X-CSRF-TOKEN' : $('meta[name="csrf-token"]').attr('content')
+    }, 
                         dataType:'json',
                         data: {Ajax:1,timeSpan:'6 month',market_id:<?php echo $market_id ?>},
                         cache:false,
@@ -362,6 +382,9 @@
                     $.ajax({
                         url:"<?php echo action('HomeController@getChart')?>",
                         type:'post',
+                          headers : { 
+    'X-CSRF-TOKEN' : $('meta[name="csrf-token"]').attr('content')
+    }, 
                         dataType:'json',
                         data: {Ajax:1,timeSpan:'12 month',market_id:<?php echo $market_id ?>},
                         cache:false,
@@ -421,6 +444,9 @@
         $.ajax({
             url:"<?php echo action('OrderController@getOrderDepthChart')?>",
             type:'post',
+              headers : { 
+    'X-CSRF-TOKEN' : $('meta[name="csrf-token"]').attr('content')
+    }, 
             dataType:'json',
             data: {Ajax:1,market_id:<?php echo $market_id ?>},
             cache:false,

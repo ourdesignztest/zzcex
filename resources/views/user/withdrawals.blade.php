@@ -27,6 +27,7 @@
 	<span class="text-high">To make a new withdrawal, please visit the <label class="label label-info"><a href="<?=url('/user/profile/balances', $parameters = array(), $secure = null);?>" style="color: #FFF;">Balances</a></label> page and select the Withdraw option under the actions menu for the coin.</span>
 	<br><br>
 	<form class="form-inline" method="POST" action="{{Request::url()}}">
+   {{ csrf_field() }}
         @if($filter=='')
         <div class="form-group text size1" data-role="input-control">
           <label for="pair">{{{ trans('texts.coin')}}}</label>

@@ -109,6 +109,8 @@
                 submitHandler: function(form) {
                     var challengeField = $("input#recaptcha_challenge_field").val();
 		            var responseField = $("input#recaptcha_response_field").val();
+
+		            var _token =  
 		            console.log('responseField',responseField);
 		            $.post('<?php echo action('UserController@checkCaptcha')?>', {recaptcha_challenge_field: challengeField, recaptcha_response_field: responseField }, function(response){
 		                if(response == 1)

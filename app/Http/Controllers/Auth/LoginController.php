@@ -22,6 +22,9 @@ class LoginController extends Controller
     |
     */
 
+    protected $maxLoginAttempts = 10; // Amount of bad attempts user can make
+    //protected $lockoutTime = 300; // Time for which user is going to be blocked in seconds
+
     use AuthenticatesUsers;
 
     /**
@@ -46,28 +49,19 @@ class LoginController extends Controller
     {
         $email = $request->get('email');
         $password = $request->get('password');
+        $remember_me = $request->has('remember') ? true : false; 
 
-        if(Auth::guard('web')->attempt(['email' => $email, 'password' => $password]))
-         {
-         //dd(Auth::user());
-           $user_id = Auth::user()->id;
-           if(User::find($user_id)->hasRole('Admin'))
-           {
-                return Redirect::to('admin');
-           } 
-      
-         
-           else {
-             return Redirect::to('user/profile')->with( 'notice', "Welcome to cryptoexchange. You can now start Trading." ); 
-
-           }
-
-           
-         }else{
-            die('pennding not!!!');
-         }
-         print_r($password);
-         die;
-        die('here');
+        if(Auth::guard('web')->attempt(['email' => $email, 'password' => $password],$remember_me) || Auth::guard('web')->attempt(['username' => $email, 'password' => $password],$remember_me))
+        {
+            $user_id = Auth::user()->id;
+            if(User::find($user_id)->hasRole('Admin'))
+            {
+            return Redirect::to('admin');
+            }else {
+            return Redirect::to('user/profile')->with( 'notice', "Welcome to cryptoexchange. You can now start Trading." ); 
+            }
+        }else{
+          die('not!!!');
+        }
     }
 }
