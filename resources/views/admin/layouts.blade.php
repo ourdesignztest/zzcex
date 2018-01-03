@@ -53,8 +53,8 @@
 
                             <!--Seller Login and registration Links -->
 
-                            <li><a href="{{ url('/admin_login') }}">Admin Login</a></li>
-                            <li><a href="{{ url('/admin_register') }}">Admin Registration</a></li>
+                          <!--   <li><a href="{{ url('/admin_login') }}">Admin Login</a></li>
+                            <li><a href="{{ url('/admin_register') }}">Admin Registration</a></li> -->
                         @else
                             <li class="dropdown">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
@@ -69,7 +69,7 @@
                                             Logout
                                         </a>
 
-                                        <form id="logout-form" action="{{ url('/admin_logout') }}" method="POST" style="display: none;">
+                                        <form id="logout-form" action="{{ url('admin/admin_logout') }}" method="POST" style="display: none;">
                                             {{ csrf_field() }}
                                         </form>
                                     </li>

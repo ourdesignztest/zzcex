@@ -5,8 +5,7 @@ namespace App\Http\Controllers\AdminAuth;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
-
-//Auth facade
+use App\Models\User;
 use Auth;
 
 class LoginController extends Controller
@@ -15,7 +14,7 @@ class LoginController extends Controller
     use AuthenticatesUsers;
 
     //Where to redirect seller after login.
-    protected $redirectTo = '/admin_home';
+    protected $redirectTo = 'admin/admin_home';
 
     //Trait
     use AuthenticatesUsers;
@@ -27,9 +26,41 @@ class LoginController extends Controller
     }
 
     //Shows seller login form
-   public function showLoginForm()
-   {
-       return view('admin.login');
-   }
+    public function showLoginForm()
+    {
+     return view('admin.login');
+    }
+
+
+    public function logout(Request $request)
+    {
+        Auth::guard('admin')->logout();
+        $request->session()->flush();
+        $request->session()->regenerate();
+        return redirect('admin/admin_home');
+    }
+
+
+    public function login(Request $request)
+    {
+        $email = $request->get('email');
+        $password = $request->get('password');
+  
+        if(Auth::guard('admin')->attempt(['email' => $email, 'password' => $password]))
+        { 
+            $user_id = Auth::guard('admin')->user()->id; 
+           
+            if(User::find($user_id)->hasRole('Admin'))
+              { 
+                  return redirect('admin/admin_home');
+              }else {
+                die('password incorrect');
+              }
+
+          }else{
+          die('not!!!');
+          }
+    }
+
 }
 

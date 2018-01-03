@@ -17,12 +17,11 @@ class AuthenticateAdmin
      */
     public function handle($request, Closure $next)
     {
-        //If request does not comes from logged in seller
-       //then he shall be redirected to Seller Login page
-       if (! Auth::guard('admin')->check()) {
-           return redirect('/admin_login');
+      //If request does not comes from logged in seller
+      //then he shall be redirected to Seller Login page
+        if ( !Auth::User()->hasRole('Admin')) {
+           return redirect('/');
        }
-
        return $next($request);
     }
 }
