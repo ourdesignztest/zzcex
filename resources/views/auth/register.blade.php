@@ -45,12 +45,12 @@
 
 
                 <div class="form-group text">
-                    <input type="text" name="email" id="email" required="" class="form-control" placeholder="{{{ Lang::get('confide::confide.e_mail') }}}" value="{{{ Input::old('email') }}}">
+                    <input type="text" name="email" id="email" required="" class="form-control" placeholder="{{{ Lang::get('Email') }}}" value="{{{ Input::old('email') }}}">
                 </div>
 
 
                 <div class="form-group text">
-                    <input minlength="2" type="text" required="" class="form-control" placeholder="{{{ Lang::get('confide::confide.username') }}}" name="username" id="username" value="{{{ Input::old('username') }}}">
+                    <input minlength="2" type="text" required="" class="form-control" placeholder="{{{ Lang::get('username') }}}" name="username" id="username" value="{{{ Input::old('username') }}}">
                 </div>
                 <input type="hidden" value="@if(isset($referral)){{$referral}}@else{{{Input::old('referral')}}}@endif" name="referral">
                 <p><div class="control-group">
@@ -101,8 +101,6 @@
             var _token = $('meta[name="csrf-token"]').attr('content');
             
             $.get('<?php echo action('UserController@checkCaptcha')?>', {recaptcha_challenge_field: challengeField, recaptcha_response_field: responseField}, function(response){
-
-             alert(response);
 
                 if(response == 1)
                 {

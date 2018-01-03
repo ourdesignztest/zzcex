@@ -1,5 +1,11 @@
 <?php
-class UserAddressDeposit extends Eloquent
+
+namespace App\Models;
+use Illuminate\Database\Eloquent\Model;
+
+
+
+class UserAddressDeposit extends Model
 {
 	protected $table = 'user_address_deposit';
 	public $timestamps = false;

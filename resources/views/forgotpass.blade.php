@@ -10,6 +10,7 @@
         theme : 'clean'
      };
      </script>
+
         <div id="forgetpass" class="formuser">
             <h2>{{Lang::get('frontend_texts.forgetpass')}}</h2>
             <hr><div class="rowform m-auto text-center">
@@ -20,16 +21,16 @@
             @if ( Session::get('notice') )
             <div class="alert alert-success" role="alert">{{{ Session::get('notice') }}}</div>
             @endif
-            <form method="POST" id="forgotForm" action="{{ (Confide::checkAction('UserController@do_forgot_password')) ?: URL::to('/user/forgot') }}" accept-charset="UTF-8">
-            <input type="hidden" name="_token" value="{{{ Session::getToken() }}}">
+            <form method="POST" id="forgotForm" action="{{URL::to('/user/forgot')}}" accept-charset="UTF-8">
+              {{ csrf_field() }}
             <div class="form-group text">
               <input class="form-control" placeholder="{{{ Lang::get('confide::confide.e_mail') }}}" type="text" name="email" id="email" value="{{{ Input::old('email') }}}">
             </div>
             <p><div class="control-group">
-              <script type="text/javascript" src="https://www.google.com/recaptcha/api/challenge?k={{$recaptcha_publickey}}"></script>
+              <script type="text/javascript" src="https://www.google.com/recaptcha/api/challenge?k={{$data['recaptcha_publickey']}}"></script>
               <script type="text/javascript" src="https://www.google.com/recaptcha/api/js/recaptcha.js"></script>
               <noscript>
-              &lt;iframe src="https://www.google.com/recaptcha/api/noscript?k={{$recaptcha_publickey}}" height="300" width="300" frameborder="0"&gt;&lt;/iframe&gt;&lt;br/&gt;
+              &lt;iframe src="https://www.google.com/recaptcha/api/noscript?k={{$data['recaptcha_publickey']}}" height="300" width="300" frameborder="0"&gt;&lt;/iframe&gt;&lt;br/&gt;
               &lt;textarea name="recaptcha_challenge_field" rows="3" cols="40"&gt;&lt;/textarea&gt;
               &lt;input type="hidden" name="recaptcha_response_field" value="manual_challenge"/&gt;
               </noscript>
@@ -68,7 +69,7 @@
               var challengeField = $("input#recaptcha_challenge_field").val();
             var responseField = $("input#recaptcha_response_field").val();
             console.log('responseField',responseField);
-            $.post('<?php echo action('UserController@checkCaptcha')?>', {recaptcha_challenge_field: challengeField, recaptcha_response_field: responseField }, function(response){
+            $.get('<?php echo action('UserController@checkCaptcha')?>', {recaptcha_challenge_field: challengeField, recaptcha_response_field: responseField }, function(response){
                 if(response == 1)
                 {
                   $('button[type=submit]').hide();

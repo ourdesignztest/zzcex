@@ -1,8 +1,11 @@
+
+
 @extends('admin.layouts.master')
 @section('content')
 {{ HTML::script('assets/js/colorPicker.js') }}
 <h2>{{trans('admin_texts.general')}}</h2>
 <form class="form-horizontal" role="form" method="POST" action="{{{ url('/admin/update-setting') }}}" enctype="multipart/form-data" id="setting_general">
+{{ csrf_field() }}
 	@if ( Session::get('error') )
       <div class="alert alert-error">{{{ Session::get('error') }}}</div>
 	@endif

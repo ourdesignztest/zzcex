@@ -28,9 +28,6 @@ Route::get('/locale/{locale}', 'BaseController@setLocale' ); //link guide: http:
 Route::get('post/{post}', 'HomeController@viewPost');
 #################################################################################
 
-
-
-
 //trading
 Route::post('dobuy', 'OrderController@doBuy');
 Route::post('dosell', 'OrderController@doSell');
@@ -38,27 +35,19 @@ Route::post('docancel', 'OrderController@doCancel');
 Route::post('dotest', 'HomeController@doTest');
 Route::post('get-orderdepth-chart', 'OrderController@getOrderDepthChart');
 
-
 // Confide routes
 Route::get( 'referral/{referral}','UserController@create');
 Route::get( 'user/register','UserController@create');
 /*Route::post('user','UserController@store');*/
 Route::post('user','Auth\RegisterController@store');
-
 Route::get( 'login','UserController@login');
 Route::post('user/login','Auth\LoginController@do_login');
 Route::get( 'user/confirm/{code}','UserController@confirm');
 Route::get( 'user/forgot_password','UserController@forgot_password');
-Route::post('user/forgot_password','UserController@do_forgot_password');
+Route::post('user/forgot','UserController@do_forgot_password');
 Route::get( 'user/reset_password/{token}','UserController@reset_password');
 Route::post('user/reset_password','UserController@do_reset_password');
 Route::get('user/logout','UserController@logout');
-
-
-/*Route::get('check-captcha',function(){
-  die('here');
-});*/
-
 Route::get('check-captcha','UserController@checkCaptcha');
 Route::post('user/update-setting','UserController@updateSetting');
 Route::post('user/add-infoverify','UserController@addInfoVerify');
@@ -78,6 +67,7 @@ Route::group(array('before' => 'auth','prefix' => 'user','middleware' => 'auth')
   Route::get('withdraw-comfirm/{withdraw_id}/{confirmation_code}', 'UserController@comfirmWithdraw');
   Route::post('referrer-tradekey', 'UserController@referreredTradeKey');
   Route::post('cancel-withdraw', 'UserController@cancelWithdraw');
+  
   //transfer
   Route::get('transfer-coin/{wallet_id}', 'UserController@formTransfer');
   Route::post('transfer-coin', 'UserController@doTransfer');
@@ -87,18 +77,12 @@ Route::group(array('before' => 'auth','prefix' => 'user','middleware' => 'auth')
   
 });
 
-
-
 //authy two-factor auth
 Route::post( '/postrequestauth', 'AuthController@ajaxRequestInstallation' );
-Route::post( '/first_auth', 'UserController@firstAuth' );
+/*Route::post( '/first_auth', 'UserController@firstAuth' );*/
+Route::post( '/first_auth', 'Auth\LoginController@firstAuth' );
 Route::post( 'user/verify_token', 'AuthController@ajVerifyToken' );
 Route::post( '/postuninstalltwoauth', 'AuthController@ajaxUninstallation' );
-
-
-
-
-
 
 //trading
 Route::post('dobuy', 'OrderController@doBuy');
@@ -107,8 +91,6 @@ Route::post('docancel', 'OrderController@doCancel');
 Route::post('dotest', 'HomeController@doTest');
 Route::post('get-orderdepth-chart', 'OrderController@getOrderDepthChart');
 
-
-
 //deposit
 Route::post('generate-addr-deposit', 'DepositController@generateNewAddrDeposit');
 Route::get('cron-update-deposit', 'DepositController@cronUpdateDeposit');
@@ -116,30 +98,20 @@ Route::get('callback-update-deposit/{wallet_type}', 'DepositController@callbackU
 Route::get('callback-update-deposit-test/{wallet_type}', 'DepositController@callbackUpdateDeposit_test');
 Route::get('blocknotify-update-deposit/{wallet_type}', 'DepositController@blocknotifyUpdateDeposit');
 
-
 //HybridAuth
 //http://www.mrcasual.com/on/coding/laravel4-package-management-with-composer/
 Route::get('social/{action?}', array("as" => "hybridauth",'uses' => 'UserController@socialLogin'));
 Route::get('sms-verify', 'UserController@formSMSVerify');
 Route::post( 'user/social_verify_token', 'AuthController@socialAjVerifyToken' );
 
-
-
-
-
 //Only logged in admin can access or send requests to these pages
-Route::group(['prefix' => 'admin','middleware' =>'admin_auth'], function(){
+Route::group(['prefix' => 'admin','middleware' =>array('auth','admin_auth')], function(){
 
-
-    Route::post('admin_logout', 'AdminAuth\LoginController@logout');
-
-    Route::get('/admin_home', 'AdminAuth\Admin_SettingController@routePage');
-
-
+   /* Route::post('admin_logout', 'AdminAuth\LoginController@logout');*/
+    Route::get('/', 'AdminAuth\Admin_SettingController@routePage');
     Route::get('setting', 'AdminAuth\Admin_SettingController@routePage');
     Route::get('setting/{page}', 'AdminAuth\Admin_SettingController@routePage');
     Route::get('setting/{page}/{pager_page}', 'AdminAuth\Admin_SettingController@routePage');
-
     Route::get('statistic/{page}', 'AdminAuth\Admin_SettingController@routePage');
 
     //content
@@ -151,13 +123,12 @@ Route::group(['prefix' => 'admin','middleware' =>'admin_auth'], function(){
     Route::post('manage/{page}', 'AdminAuth\Admin_SettingController@routePage');
     Route::post('manage/{page}/{pager_page}', 'AdminAuth\Admin_SettingController@routePage');
     Route::get('manage/{page}/{pager_page}', 'AdminAuth\Admin_SettingController@routePage');
-
     Route::post('update-setting', 'AdminAuth\Admin_SettingController@updateSetting');
     Route::post('set-fee-trade', 'AdminAuth\Admin_SettingController@setFeeTrade');
     Route::post('set-fee-withdraw', 'AdminAuth\Admin_SettingController@setFeeWithdraw');
-
     Route::post('add-coin-vote', 'AdminAuth\Admin_SettingController@addNewCoinVote');
     Route::post('delete-coin-vote', 'AdminAuth\Admin_SettingController@deleteCoinVote');
+
     //user
     Route::post('add-user', 'AdminAuth\Admin_SettingController@addNewUser');
     Route::get('edit-user/{user}', 'AdminAuth\Admin_SettingController@editUSer');
@@ -181,9 +152,7 @@ Route::group(['prefix' => 'admin','middleware' =>'admin_auth'], function(){
     Route::get('edit-post/{post}', 'AdminAuth\Admin_SettingController@editPost');
     Route::post('edit-post', 'AdminAuth\Admin_SettingController@doEditPost');
     Route::post('delete-post', 'AdminAuth\Admin_SettingController@deletePost');
-
     Route::post('send-coin', 'AdminAuth\Admin_SettingController@doSendCoin');
-
     Route::get('backup', 'AdminAuth\Admin_SettingController@formBackup');
     Route::post('restore', 'AdminAuth\Admin_SettingController@doBackup');
     Route::get('restore', 'AdminAuth\Admin_SettingController@formRestore');
@@ -200,7 +169,6 @@ Route::group(['prefix' => 'admin','middleware' =>'admin_auth'], function(){
     Route::get('edit-time-limit-trade/{wallet}', 'AdminAuth\Admin_SettingController@editTimeLimitTrade');
     Route::post('edit-time-limit-trade', 'AdminAuth\Admin_SettingController@doEditTimeLimitTrade');
     Route::post('delete-time-limit-trade', 'AdminAuth\Admin_SettingController@deleteTimeLimitTrade');
-
     Route::get('verify-user/{user}', 'AdminAuth\Admin_SettingController@verifyUSer');
     Route::post('verify-user', 'AdminAuth\Admin_SettingController@doVerifyUSer');
 
@@ -218,18 +186,4 @@ Route::group(['prefix' => 'admin','middleware' =>'admin_auth'], function(){
     Route::post('delete-method-withdraw', 'AdminAuth\Admin_SettingController@deleteMethodWithdraw');
     Route::post('update-takemoney-withdraw', 'AdminAuth\Admin_SettingController@doUpdateTakeMoneyWithdraw');
 
-
-});
-
-
-
-
-
-
-
-
-//Logged in users/admin cannot access or send requests these pages
-  Route::group(['prefix' => 'admin','middleware' => 'admin_auth'], function() {
-/*Route::get('admin_login', 'AdminAuth\LoginController@showLoginForm');*/
-  Route::post('admin_login', 'AdminAuth\LoginController@login');
 });

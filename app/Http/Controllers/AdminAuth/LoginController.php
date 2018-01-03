@@ -5,11 +5,8 @@ namespace App\Http\Controllers\AdminAuth;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
-
-//Auth facade
-use Auth;
-
 use App\Models\User;
+use Auth;
 
 class LoginController extends Controller
 {
@@ -29,10 +26,10 @@ class LoginController extends Controller
     }
 
     //Shows seller login form
-   public function showLoginForm()
-   {
-       return view('admin.login');
-   }
+    public function showLoginForm()
+    {
+     return view('admin.login');
+    }
 
 
     public function logout(Request $request)

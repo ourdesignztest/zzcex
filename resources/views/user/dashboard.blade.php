@@ -66,6 +66,7 @@
             @if(empty($user->referral))
               No referring user found. If you would like to tell us who referred you, then enter their trade key below.
               <p><form class="form-horizontal" method="POST" action="{{{ URL::action('UserController@referreredTradeKey')  }}}">
+                 {{ csrf_field() }}
                 <div class="form-group">
                   <label for="inputEmail" class="col-md-3 text-right">Referrer Trade Key</label>
                   <div class="input-group col-md-8">

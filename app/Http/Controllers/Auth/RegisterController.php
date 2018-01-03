@@ -67,19 +67,7 @@ class RegisterController extends Controller
      * @param  array  $data
      * @return \App\User
      */
-    protected function create(array $data)
-    {
-       /* return User::create([
-            'name' => $data['name'],
-            'email' => $data['email'],
-            'password' => bcrypt($data['password']),
-        ]);*/
-
-        die('here');
-    }
-
-
-
+   
     public function store(Request $request)
     {
 
@@ -102,7 +90,7 @@ class RegisterController extends Controller
         $trade_key = md5($user->username.$user->email.time());
         $user->trade_key = $trade_key;
        // $user->ip_lastlogin=$this->get_client_ip();
-        $user->ip_lastlogin='182.73.233.42';
+        $user->ip_lastlogin= \Request::ip();
         // Save if valid. Password field will be hashed before save
         $user->save();
 
@@ -131,7 +119,7 @@ class RegisterController extends Controller
 
             });
 
-            $notice ="Please verify your account";
+            $notice ="Your account has been successfully created. Please check your email for the instructions on how to confirm your account.";
             // Redirect with success message
             return Redirect::action('UserController@login')->with('notice', $notice);
         }

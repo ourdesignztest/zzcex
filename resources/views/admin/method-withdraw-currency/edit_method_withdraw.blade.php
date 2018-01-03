@@ -14,7 +14,7 @@
 	      <div class="alert">{{{ Session::get('notice') }}}</div>
 	@endif
 <form class="form-horizontal" role="form" id="edit_wallet" method="POST" action="{{{URL::to('/admin/edit-method-withdraw') }}}">
-	<input type="hidden" name="_token" value="{{{ Session::getToken() }}}">
+	{{ csrf_field() }}
 	<div class="form-group">
 	    <label for="inputEmail3" class="col-sm-2 control-label">{{Lang::get('admin_texts.method_id')}}</label>
 	    <div class="col-sm-10">

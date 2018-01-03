@@ -19,6 +19,7 @@
             {{ Session::get('notice') }}
         </div>
     @endif   
+
     <form id="registerForm" method="POST" action="{{url('/user/add-infoverify')}}" enctype="multipart/form-data">  
      {{ csrf_field() }}  
     <h3>{{Lang::get('user_texts.where_you')}}</h3>

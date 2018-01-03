@@ -8,6 +8,10 @@ use Illuminate\Http\Request;
 use Auth;
 use App\Models\User;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Input;
+use Hash;
+use Config;
+use App;
 
 class LoginController extends Controller
 {
@@ -61,7 +65,61 @@ class LoginController extends Controller
             return Redirect::to('user/profile')->with( 'notice', "Welcome to cryptoexchange. You can now start Trading." ); 
             }
         }else{
-          die('not!!!');
+            return back() ->with( 'notice', "Email or password is invalid." );
         }
     }
+
+
+
+    public function firstAuth(){
+        $input = array(
+                    'email'    => Input::get( 'email' ), // May be the username too
+                    'username' => Input::get( 'email' ), // so we have to pass both
+                    'password' => Input::get( 'password' ),
+                );
+        $user = User::where('email','=',Input::get( 'email' ))->orwhere('username','=',Input::get( 'email' ))->first();
+
+        if(!empty($user->banned ==1)){
+            echo json_encode(array('status'=>'error','message'=>Lang::get('messages.you_was_banned')));
+            exit;
+        }
+
+        if(!empty($user->confirmed == 0))
+        {
+            echo json_encode(array('status'=>'error','message'=>'Your account may not be confirmed. Check your email for the confirmation link'));
+            exit;
+        }
+
+        if(isset($user->password) && Hash::check(Input::get( 'password' ), $user->password)){
+
+            if(!empty($user->authy)) {
+
+                $authcontroller = new app('App\Http\Controllers\AuthController');
+                $auth_controller = app('App\Http\Controllers\AuthController')->getAuthy();
+                $requestSms = $auth_controller->requestSms($user->authy);
+               /*
+                $auth_controller = app('App\Http\Controllers\AuthController')->getAuthy();
+                $requestSms =  $auth_controller->requestSms($user->authy);*/
+                // echo "<pre>errors: "; print_r($requestSms->errors()); echo "</pre>";
+                // echo "<pre>requestSms: "; print_r($requestSms); echo "</pre>";
+                if($requestSms->ok()){
+                    echo json_encode((array)$requestSms->ok()+array('status'=>'two_login', 'authy_id'=>$user->authy));
+                    exit;
+                }else{//not_sent_token
+                    echo json_encode((array)$requestSms->errors()+array('status'=>'error'));
+                    exit;
+                }
+
+            }else{
+                  echo json_encode($input + array('status'=>'one_login_success','signup_confirm'=>Config::get('signup_confirm')));
+                    exit;
+            }
+        }else{
+
+            echo json_encode(array('status'=>'error','message'=> trans('messages.not_match_user')));
+            exit;
+        }
+    }
+
+
 }

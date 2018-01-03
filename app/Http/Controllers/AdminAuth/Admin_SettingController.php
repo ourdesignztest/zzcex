@@ -1,6 +1,4 @@
 <?php
-
-
 namespace App\Http\Controllers\AdminAuth;
 
 use Illuminate\Http\Request;
@@ -23,7 +21,9 @@ use App\Models\WalletLimitTrade;
 use App\Models\UserInformation;
 use App\Models\Deposit;
 use App\Models\Withdraw;
-
+use App\Models\MethodDepositCurrency;
+use App\Models\MethodWithdrawCurrency;
+use App\Models\Vote;
 use Crypt;
 use Session;
 use DB;
@@ -51,8 +51,6 @@ class Admin_SettingController extends Controller {
 
 	public function routePage($page='',$pager_page='')
 	{
-		die('here');
-
 		
 		$markets = Market::where('active',1)->get();
         $market_wallet = array();
@@ -706,8 +704,8 @@ class Admin_SettingController extends Controller {
 	}
 
 	public function addNewUser(){
-		$user = new User;
 
+		$user = new User;
         $user->firstname = Input::get( 'firstname' );
         $user->lastname = Input::get( 'lastname' );
         $user->username = Input::get( 'username' );

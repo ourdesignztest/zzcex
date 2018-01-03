@@ -34,7 +34,9 @@
     		  $('#post-two-auth').click(function(e) {
     		      var phone = $('#phone').val();
     		      var code_area = $('input[name=country-code]').val();
-    		      	$.post('<?php echo action('AuthController@ajaxRequestInstallation')?>', {isAjax: 1, phone:phone, code_area:code_area}, function(response){
+              var _token =  $('meta[name="csrf-token"]').attr('content');
+    		      	$.post('<?php echo action('AuthController@ajaxRequestInstallation')?>', {isAjax: 1, phone:phone, code_area:code_area,
+                  _token:_token}, function(response){
     		      		console.log('response: ',response);
     			        var obj = $.parseJSON(response);
     			        if(obj.status=='error'){

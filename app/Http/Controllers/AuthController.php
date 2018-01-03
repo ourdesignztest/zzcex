@@ -1,7 +1,10 @@
 <?php
-
 namespace App\Http\Controllers;
+
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Input;
+use Illuminate\Support\Facades\Validator;
 use App\Models\User;
 use App\Models\Setting;
 use App\Models\Wallet;
@@ -19,11 +22,7 @@ use DB;
 use View;
 use Auth;
 use HTML;
-use Illuminate\Support\Facades\Redirect;
-use Illuminate\Support\Facades\Input;
 use Mail;
-use Illuminate\Support\Facades\Validator;
-
 use Authy;
 use Config;
 
@@ -32,38 +31,33 @@ class AuthController extends Controller {
 
     public function __construct()
     {
-
-  
-		// production
-		//$this->authy = new Authy\AuthyApi(Config::get('auth.authy'));
-
-		//sandbox
 		$this->authy = new Authy\AuthyApi(Config::get('auth.authy'),'http://sandbox-api.authy.com');
     }
 
     public function getAuthy(){
+
         return $this->authy;
     }
+
+
     public function ajaxRequestInstallation()
     {
-
         $user = Auth::user();
-
         $installation = $this->authy->registerUser($user->email, Input::get('phone'),Input::get('code_area'));
         if($installation->ok()) {
-            User::where('id', $user->id)->update(array('authy' => $installation->id()));
-            echo json_encode(array('status'=>'success','id'=>$installation->id(),'phone'=>Input::get('phone'), 'code_area'=>Input::get('code_area')));
-            exit;
+        User::where('id', $user->id)->update(array('authy' => $installation->id()));
+        echo json_encode(array('status'=>'success','id'=>$installation->id(),'phone'=>Input::get('phone'), 'code_area'=>Input::get('code_area')));
+        exit;
         }else{
-            echo json_encode(array('status'=>'error','errors'=>$installation->errors(),'phone'=>Input::get('phone'), 'code_area'=>Input::get('code_area')));
-            exit;
+        echo json_encode(array('status'=>'error','errors'=>$installation->errors(),'phone'=>Input::get('phone'), 'code_area'=>Input::get('code_area')));
+        exit;
         }
     }
+
 
     public function ajaxUninstallation()
     {
         $user = Auth::user();
-
         $uninstallation = $this->authy->deleteUser($user->authy);
         if($uninstallation->ok()) {
             User::where('id', $user->id)->update(array('authy' => ''));
@@ -75,24 +69,16 @@ class AuthController extends Controller {
         }
     }
 
+
     public function ajVerifyToken()
     {
-       
-
-         
-      //  $verification = $this->authy->verifyToken(Input::get('authy_id'), Input::get('token'), array('force' => 'true'));
-         
-        $verification = $this->authy->verifyToken(Input::get('authy_id'), Input::get('token'), array('force' => 'true'));
-         
-        print_r($verification);
-        die;
-
+        $verification = $this->authy->verifyToken(Input::get('authy_id'), Input::get('token'), array('force' => 'true'));  
         if($verification->ok()) {
-            echo json_encode(array('status'=>'success'));
-            exit;
+        echo json_encode(array('status'=>'success'));
+        exit;
         }else {
-            echo json_encode((array)$verification->errors()+array('status'=>'error','message'=> trans('messages.unable_verify_token')));
-            exit;
+        echo json_encode((array)$verification->errors()+array('status'=>'error','message'=> trans('messages.unable_verify_token')));
+        exit;
         }
     }
 
@@ -101,6 +87,8 @@ class AuthController extends Controller {
      */
     public function socialAjVerifyToken()
     {
+
+        die('socialAjVerifyToken');
         $verification = $this->authy->verifyToken(Input::get('authy_id'), Input::get('token'), array('force' => 'true'));
         //echo "<pre>verification: "; print_r($verification); echo "</pre>";
         if($verification->ok()) {

@@ -18,7 +18,7 @@
 <a href="javascript:void()" id="add_wallet_link">{{Lang::get('admin_texts.add_new_method')}}</a>
 
 <form class="form-horizontal" role="form" id="add_new_wallet" method="POST" action="{{{URL::to('/admin/add-method-withdraw') }}}">
-	<input type="hidden" name="_token" value="{{{ Session::getToken() }}}">
+{{ csrf_field() }}
 	<div class="form-group">
 	    <label for="inputEmail3" class="col-sm-2 control-label">{{Lang::get('admin_texts.method_name')}}</label>
 	    <div class="col-sm-10">
@@ -90,7 +90,7 @@
 {{ HTML::script('assets/js/jquery.validate.min.js') }}
 <script type="text/javascript">
 function deleteMethodWithdraw(wallet_id){
-	$.post('<?php echo action('Admin_SettingController@deleteMethodWithdraw')?>', {isAjax: 1, wallet_id: wallet_id }, function(response){
+	$.post('<?php echo action('AdminAuth\Admin_SettingController@deleteMethodWithdraw')?>', {isAjax: 1, wallet_id: wallet_id }, function(response){
        	var obj = $.parseJSON(response);
 	    console.log('obj: ',obj);
 	    if(obj.status == 'success'){

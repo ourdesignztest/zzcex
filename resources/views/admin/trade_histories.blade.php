@@ -10,6 +10,7 @@ foreach (Request::query() as $key => $value) {
 $query_string = trim($query_string,'&');
 ?>
 <form class="form-inline" method="get" action="{{{URL::to('/admin/manage/trade-histories')}}}">
+{{ csrf_field() }}
     <label>{{{ trans('texts.market')}}}</label>
     <select id="pair" style="margin-right: 20px;" name="market">
         <option value="" @if(isset($_GET['market'])  && $_GET['market'] == '') selected @endif>{{trans('texts.all')}}</option>

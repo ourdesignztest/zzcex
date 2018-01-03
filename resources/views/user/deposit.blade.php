@@ -1,4 +1,5 @@
 <!-- Security -->
+
 @section('title')
 {{{ trans('texts.deposit')}}}
 @stop
@@ -49,7 +50,8 @@
 			  	function generateNewAddrDeposit(){
 			  		$('input.generateAddress').hide();
 			      	var wallet_id = $('#wallet_id').val();
-			      	$.post('<?php echo action('DepositController@generateNewAddrDeposit')?>', {isAjax: 1, wallet_id: wallet_id}, function(response){
+			      	var _token = $('meta[name="csrf-token"]').attr('content');
+			      	$.post('<?php echo action('DepositController@generateNewAddrDeposit')?>', {isAjax: 1, wallet_id: wallet_id,_token:_token}, function(response){
 			          var obj = $.parseJSON(response);
 			          //console.log('ajVerifyToken: ',obj);
 			          $('input.generateAddress').show();

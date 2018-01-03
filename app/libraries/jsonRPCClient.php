@@ -1,4 +1,8 @@
 <?php
+namespace App\libraries;
+use Exception;
+
+
 /*
                                         COPYRIGHT
  
@@ -91,7 +95,7 @@ class jsonRPCClient {
 
                 // check
                 if (!is_scalar($method)) {
-                        throw new Exception('Method name has no scalar value');
+                        throw new \Exception('Method name has no scalar value');
                 }
 
                 // check
@@ -99,7 +103,7 @@ class jsonRPCClient {
                         // no keys
                         $params = array_values($params);
                 } else {
-                        throw new Exception('Params must be given as array');
+                        throw new \Exception('Params must be given as array');
                 }
 
                 // sets notification or request task
@@ -128,12 +132,12 @@ class jsonRPCClient {
                 curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
                 
                 if (curl_errno($ch)) {
-                    throw new Exception('JSON-RPC Error: %s.', curl_error($ch));
+                    throw new \Exception('JSON-RPC Error: %s.', curl_error($ch));
                 }
                 $response = curl_exec($ch);
                 if($response === false)
                 {
-                        throw new Exception('Unable to connect to '.$this->url);
+                        throw new \Exception('Unable to connect to '.$this->url);
                 }
                         
                 $this->debug && $this->debug.='***** Server response *****'."\n".$response.'***** End of server response *****'."\n";
@@ -148,10 +152,10 @@ class jsonRPCClient {
                 if (!$this->notification) {
                 // check
                         if ($response['id'] != $currentId) {
-                                throw new Exception('Incorrect response id (request id: '.$currentId.', response id: '.$response['id'].')');
+                                throw new \Exception('Incorrect response id (request id: '.$currentId.', response id: '.$response['id'].')');
                         }
                         if (!is_null($response['error'])) {
-                                throw new Exception('Request error: '.$response['error']['message']);
+                                throw new \Exception('Request error: '.$response['error']['message']);
                         }
 
                         return $response['result'];

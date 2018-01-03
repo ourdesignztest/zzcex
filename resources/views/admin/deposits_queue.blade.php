@@ -22,6 +22,7 @@ $query_string = trim($query_string,'&');
       <div class="alert">{{{ Session::get('notice') }}}</div>
 @endif
 <form class="form-inline"  role="form" id="filter_market" method="get" action="{{{URL::to('/admin/manage/deposits-queue')}}}">
+{{ csrf_field() }}
 	<label>{{{ trans('admin_texts.wallet')}}}</label>
     <select name="wallet_id">
 	  	<option value="" @if(isset($_GET['wallet_id']) && $_GET['wallet_id']=='') selected @endif>--{{trans('admin_texts.all')}}--</option>

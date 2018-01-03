@@ -18,7 +18,7 @@
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
             <li @if(Request::is('market', 'market/*')) {{'class="active"'}} @endif><a href="<?=url('/market', $parameters = array(), $secure = null);?>">Markets</a></li>
-            <li @if(Request::is('page/voting')) {{'class="active"'}} @endif>{{ HTML::link('page/voting', trans('user_texts.voting'), array('class' => Request::is('page/voting')?'active':'')) }}</li>
+          <!--   <li @if(Request::is('page/voting')) {{'class="active"'}} @endif>{{ HTML::link('page/voting', trans('user_texts.voting'), array('class' => Request::is('page/voting')?'active':'')) }}</li> -->
             <li @if(Request::is('page/fees')) {{'class="active"'}} @endif>{{ HTML::link('page/fees', trans('user_texts.fees'), array('class' => Request::is('page/fees')?'active':'')) }}</li>
             <li><a href="#" data-toggle="modal" data-target="#HelpModal"><i class="fa fa-question-circle"></i> Help</a></li>
             <li><a href="#" class="text-small"><img src="{{ asset('assets/img/btc.png') }}" border="0" height="33px" /> <span class="text-small blue">${{sprintf('%.2f',$btc_usd)}} USD</span></a></li>
@@ -31,24 +31,22 @@
             <!-- <li><a href="<?=url('/social/facebook', $parameters = array(), $secure = null);?>" class="navitem text-small"><img width="20px" src="{{asset('assets/img/face_login.png')}}"></a></li> -->
             <!-- <li><a href="<?=url('/social/google', $parameters = array(), $secure = null);?>" class="navitem text-small"><img width="20px" src="{{asset('assets/img/google_login.png')}}"></a></li> -->
           @if(!empty($locales))
-            <li class="dropdown">
+           <!--  <li class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-flag"></i> <span class="caret"></span></a>
               <ul class="dropdown-menu" role="menu">
                 @foreach($locales as $locale)
                   <li @if(Session::get( 'locale' )==$locale) {{'class="active"'}} @endif>{{ HTML::link('locale/'.$locale, trans('frontend_texts.'.$locale)) }}</li>
                 @endforeach
               </ul>
-            </li>
+            </li> -->
           @endif
+
+          
           @else
             <li class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><img src="http://www.gravatar.com/avatar/<?php echo md5( strtolower( trim(Auth::user()->email)) ); ?>" height="33px" border="0" style="border-radius:60px;" /> {{trans('user_texts.hello')}} {{Auth::user()->username}} <span class="caret"></span></a>
               <ul class="dropdown-menu" role="menu">
                       <li @if(Request::is('user/profile/dashboard')) {{'class="active"'}} @endif>{{ HTML::link('user/profile/dashboard', trans('user_texts.dashboard')) }}</li>
-
-                      <li @if(Request::is('user/profile/dashboard')) {{'class="active"'}} @endif>{{ HTML::link('user/profile/dashboard', trans('user_texts.Admin panel')) }}</li>
-
-
                       <li @if(Request::is('user/profile/verify')) {{'class="active"'}} @endif>{{ HTML::link('user/profile/verify', trans('user_texts.verify_account')) }}</li>
                       <li @if(Request::is('user/profile')) {{'class="active"'}} @endif>{{ HTML::link('user/profile', trans('user_texts.profile')) }}</li>
                       <li @if(Request::is('user/profile/two-factor-auth')) {{'class="active"'}} @endif>{{ HTML::link('user/profile/two-factor-auth', trans('user_texts.security')) }}</li>

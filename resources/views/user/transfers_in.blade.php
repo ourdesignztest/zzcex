@@ -14,6 +14,7 @@ if(!empty($query_string)) $query_string = "&".$query_string;
     <h2>{{{ trans('texts.transfer_in')}}} @if(isset($current_coin)) {{' - '.$current_coin}} @endif</h2>
     @if($filter=='')
     <form class="form-inline" method="GET" action="{{Request::url()}}">
+        {{ csrf_field() }}
         <div class="form-group text size1">
             <label for="pair">{{{ trans('texts.wallet')}}}</label>
             <select id="pair" style="margin-right: 20px;" name="wallet" class="form-control">

@@ -7,22 +7,35 @@
 
 
 @foreach($btc_markets as $btc_market)
- @if($btc_market->name =="Bitcoin" || $btc_market->name =="Litecoin" || $btc_market->name =="DogeCoin" || $btc_market->name =="Ethereum")
 
- <li class="@if($market_id==$btc_market->id) active @endif tab{{$btc_market->id}}"><a href="<?=url('/market/'.$btc_market->id);?>"><img src="{{ asset('assets/img') }}/{{$btc_market->type}}.png" border="0" height="20px" /> <i class="fa fa-arrows-h"></i> <img src="{{ asset('assets/img/btc.png') }}" border="0" height="20px" /></a></li>
+@if($btc_market->name =="Bitcoin" || $btc_market->name =="Litecoin" || $btc_market->name =="DogeCoin" || $btc_market->name =="Ethereum")
 
- @endif
+<li class="@if($market_id==$btc_market->id) active @endif tab{{$btc_market->id}}"><a href="<?=url('/market/'.$btc_market->id);?>"><img src="{{ asset('assets/img') }}/{{$btc_market->type}}.png" border="0" height="20px" /> <i class="fa fa-arrows-h"></i> <img src="{{ asset('assets/img/btc.png') }}" border="0" height="20px" /></a></li>
+
+@endif
+
 @endforeach
-
-
 
 
 @foreach($ltc_markets as $ltc_market)
- @if($ltc_market->name =="Bitcoin" || $ltc_market->name =="Litecoin" || $ltc_market->name =="DogeCoin" || $ltc_market->name =="Ethereum")
- <li class="@if($market_id==$ltc_market->id) active @endif tab{{$ltc_market->id}}"><a href="<?=url('/market/'.$ltc_market->id);?>"><img src="{{ asset('assets/img') }}/{{$ltc_market->type}}.png" border="0" height="20px" /> <i class="fa fa-arrows-h"></i> <img src="{{ asset('assets/img/ltc.png') }}" border="0" height="20px" /></a></li>
- @endif
+
+@if($ltc_market->name =="Bitcoin" || $ltc_market->name =="Litecoin" || $ltc_market->name =="DogeCoin" || $ltc_market->name =="Ethereum")
+
+<li class="@if($market_id==$ltc_market->id) active @endif tab{{$ltc_market->id}}"><a href="<?=url('/market/'.$ltc_market->id);?>"><img src="{{ asset('assets/img') }}/{{$ltc_market->type}}.png" border="0" height="20px" /> <i class="fa fa-arrows-h"></i> <img src="{{ asset('assets/img/ltc.png') }}" border="0" height="20px" /></a></li>
+
+@endif
+
 @endforeach
+
+
+
+
 </ul>
+
+
+
+
+
 <div class="pricepanel">
   <div class="row visible-xs">
     <div class="col-xs-12 text-center">
@@ -104,9 +117,6 @@
         $.ajax({
             url:"<?php echo action('HomeController@getChart')?>",
             type:'post',
-            headers : { 
-             'X-CSRF-TOKEN' : $('meta[name="csrf-token"]').attr('content')
-            }, 
             dataType:'json',
             data: {Ajax:1,timeSpan:timeSpan_,market_id:<?php echo $market_id ?>},
             cache:false,
@@ -216,9 +226,6 @@
                     $.ajax({
                         url:"<?php echo action('HomeController@getChart')?>",
                         type:'post',
-                        headers : { 
-                         'X-CSRF-TOKEN' : $('meta[name="csrf-token"]').attr('content')
-                        }, 
                         dataType:'json',
                         data: {Ajax:1,timeSpan:'1 day',market_id:<?php echo $market_id ?>},
                         cache:false,
@@ -249,9 +256,6 @@
                     $.ajax({
                         url:"<?php echo action('HomeController@getChart')?>",
                         type:'post',
-                        headers : { 
-                         'X-CSRF-TOKEN' : $('meta[name="csrf-token"]').attr('content')
-                        }, 
                         dataType:'json',
                         data: {Ajax:1,timeSpan:'7 day',market_id:<?php echo $market_id ?>},
                         cache:false,
@@ -285,9 +289,6 @@
                     $.ajax({
                         url:"<?php echo action('HomeController@getChart')?>",
                         type:'post',
-                        headers : { 
-                         'X-CSRF-TOKEN' : $('meta[name="csrf-token"]').attr('content')
-                        }, 
                         dataType:'json',
                         data: {Ajax:1,timeSpan:'1 month',market_id:<?php echo $market_id ?>},
                         cache:false,
@@ -303,7 +304,7 @@
                         }
                     });
                 }
-				function zoombaMonth () {
+                function zoombaMonth () {
                     // zoom here sets the month back 1, which can have odd effects when the last month has more days than the previous month
                     // eg: if the last day is March 31, then zooming last month will give a range of March 3 - March 31, as this sets the start date to February 31, which doesn't exist
                     // you can tweak this to make it function differently if you want
@@ -321,9 +322,6 @@
                     $.ajax({
                         url:"<?php echo action('HomeController@getChart')?>",
                         type:'post',
-                        headers : { 
-                           'X-CSRF-TOKEN' : $('meta[name="csrf-token"]').attr('content')
-                        }, 
                         dataType:'json',
                         data: {Ajax:1,timeSpan:'3 month',market_id:<?php echo $market_id ?>},
                         cache:false,
@@ -339,7 +337,7 @@
                         }
                     });
                 }
-				function zoomsauMonth () {
+                function zoomsauMonth () {
                     // zoom here sets the month back 1, which can have odd effects when the last month has more days than the previous month
                     // eg: if the last day is March 31, then zooming last month will give a range of March 3 - March 31, as this sets the start date to February 31, which doesn't exist
                     // you can tweak this to make it function differently if you want
@@ -357,9 +355,6 @@
                     $.ajax({
                         url:"<?php echo action('HomeController@getChart')?>",
                         type:'post',
-                        headers : { 
-                           'X-CSRF-TOKEN' : $('meta[name="csrf-token"]').attr('content')
-                        }, 
                         dataType:'json',
                         data: {Ajax:1,timeSpan:'6 month',market_id:<?php echo $market_id ?>},
                         cache:false,
@@ -375,7 +370,7 @@
                         }
                     });
                 }
-				function zoommhaiMonth () {
+                function zoommhaiMonth () {
                     // zoom here sets the month back 1, which can have odd effects when the last month has more days than the previous month
                     // eg: if the last day is March 31, then zooming last month will give a range of March 3 - March 31, as this sets the start date to February 31, which doesn't exist
                     // you can tweak this to make it function differently if you want
@@ -393,9 +388,6 @@
                     $.ajax({
                         url:"<?php echo action('HomeController@getChart')?>",
                         type:'post',
-                        headers : { 
-                          'X-CSRF-TOKEN' : $('meta[name="csrf-token"]').attr('content')
-                        }, 
                         dataType:'json',
                         data: {Ajax:1,timeSpan:'12 month',market_id:<?php echo $market_id ?>},
                         cache:false,
@@ -427,7 +419,7 @@
                         document.querySelector('#lastDay').attachEvent('onclick', zoomLastDay);
                         document.querySelector('#lastWeek').attachEvent('onclick', zoomLastWeek);
                         document.querySelector('#lastMonth').attachEvent('onclick', zoomLastMonth);
-						document.querySelector('#baMonth').addEventListener('onclick', zoombaMonth);
+                        document.querySelector('#baMonth').addEventListener('onclick', zoombaMonth);
                         document.querySelector('#sauMonth').addEventListener('onclick', zoomsauMonth);
                         document.querySelector('#mhaiMonth').addEventListener('onclick', zoommhaiMonth);
                     }
@@ -455,9 +447,6 @@
         $.ajax({
             url:"<?php echo action('OrderController@getOrderDepthChart')?>",
             type:'post',
-            headers : { 
-            'X-CSRF-TOKEN' : $('meta[name="csrf-token"]').attr('content')
-            }, 
             dataType:'json',
             data: {Ajax:1,market_id:<?php echo $market_id ?>},
             cache:false,
@@ -552,8 +541,7 @@
             }else{
                 $('#dashboard_div').hide();
                 //$('#chartdiv_orderdepth').html("The Order Depth Chart is Coming soon...")
-                
-                 $('#orderdepth_chart').show("fast");
+                $('#orderdepth_chart').show('slow');
                 drawOrderDepthChart();
             }
         }

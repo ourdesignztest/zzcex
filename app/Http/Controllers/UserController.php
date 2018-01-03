@@ -1,14 +1,4 @@
 <?php
-/*
-|--------------------------------------------------------------------------
-| Confide Controller Template
-|--------------------------------------------------------------------------
-|
-| This is the default Confide controller template for controlling user
-| authentication. Feel free to change to your needs.
-|
-*/
-
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
@@ -23,28 +13,31 @@ use App\Models\FeeTrade;
 use App\Models\Trade;
 use App\Models\Post;
 use App\Models\Role;
+use App\Models\UserAddressDeposit;
 use App\Models\WalletLimitTrade;
 use App\Models\Withdraw;
 use App\Models\FeeWithdraw;
 use App\Models\UserInformation;
-
 use App\Models\Deposit;
-use Session;
-use DB;
-use View;
-use Auth;
-use HTML;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Input;
-use Mail;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Support\Facades\Hash;
 use Lang;
 use Illuminate\Routing\UrlGenerator;
+use Config;
+use Session;
+use DB;
+use View;
+use Auth;
+use HTML;
+use Mail;
 
+use Exception;
 
-//session_start();
+/*App\Models\jsonRPCClient
+use jsonRPCClient;*/
 class UserController extends Controller {
 
     /**
@@ -100,7 +93,6 @@ class UserController extends Controller {
         $recaptcha_publickey = $setting->getSetting('recaptcha_publickey','');
         $data['recaptcha_publickey']=$recaptcha_publickey;
         if($referral!='') $data['referral'] = $referral;
-        //return View::make(Config::get('confide::signup_form'), $data);
         return View::make('auth.register',compact('data'));
       }
     }
@@ -112,8 +104,7 @@ class UserController extends Controller {
      */
     public function login()
     {
-        $user = [];
-        if(!empty($user))
+        if(Auth::user())
         {
          // If user is logged, redirect to internal
          // page, change it to '/admin', '/dashboard' or something
@@ -124,7 +115,6 @@ class UserController extends Controller {
          $setting = new Setting();
          $recaptcha_publickey = $setting->getSetting('recaptcha_publickey','');
          $data['recaptcha_publickey']=$recaptcha_publickey;
-
          //return View::make(Config::get('confide::login_form'), $data);
          return View::make('auth.login',compact('data'));
          
@@ -140,13 +130,14 @@ class UserController extends Controller {
                     'email'    => Input::get( 'email' ), // May be the username too
                     'username' => Input::get( 'email' ), // so we have to pass both
                     'password' => Input::get( 'password' ),
-                    'remember' => Input::get( 'remember' ),
                 );
         $user = User::where('email','=',Input::get( 'email' ))->orwhere('username','=',Input::get( 'email' ))->first();
+
         if($user->banned){
             echo json_encode(array('status'=>'error','message'=>Lang::get('messages.you_was_banned')));
             exit;
         }
+
         if(isset($user->password) && Hash::check(Input::get( 'password' ), $user->password)){
             if(!empty($user->authy)) {
                 $authcontroller = new AuthController();
@@ -163,7 +154,7 @@ class UserController extends Controller {
                 }
 
             }else{
-                if ( $c = Confide::logAttempt( $input, Config::get('confide::signup_confirm') ) )
+                if ( $c = Auth::attempt( $input ) )
                 {
                     echo json_encode($input + array('status'=>'one_login_success','c'=>$c,'signup_confirm'=>Config::get('confide::signup_confirm')));
                     exit;
@@ -172,7 +163,7 @@ class UserController extends Controller {
                     $user = new User;
 
                     // Check if there was too many login attempts
-                    if( Confide::isThrottled( $input ) )
+                    if( Auth::isThrottled( $input ) )
                     {
                         $err_msg = Lang::get('confide::confide.alerts.too_many_attempts');
                         echo json_encode(array('status'=>'error','c'=>$c,'message'=>$err_msg));
@@ -193,6 +184,7 @@ class UserController extends Controller {
                 }
             }
         }else{
+
             echo json_encode(array('status'=>'error','message'=> trans('messages.not_match_user')));
             exit;
         }
@@ -211,13 +203,11 @@ class UserController extends Controller {
 
         if (Auth::guard("web")->attempt(['email' => $input['email'], 'password' => $input['password']]))
         {
-
-            die('here2233');
             // Redirect the user to the URL they were trying to access before
             // caught by the authentication filter IE Redirect::guest('user/login').
             // Otherwise fallback to '/'
             // Fix pull #145
-            $user = Confide::user();
+            $user = Auth::user();
             $ip=$this->get_client_ip();
             $this->sendMailIPUser($user,$ip);
             User::where('id', $user->id)->update( array('lastest_login' => date("Y-m-d H:i:s"), 'ip_lastlogin'=>$ip) );
@@ -235,36 +225,6 @@ class UserController extends Controller {
                 else return Redirect::to('user/profile')->with( 'notice', "Welcome to cryptoexchange. You can now start Trading." ); // change it to '/admin', '/dashboard' or something
             }
         }
-        else
-        {
-            
-
-            die('hereddddd');
-
-        /*    $user = new User;
-
-            // Check if there was too many login attempts
-            if( Confide::isThrottled( $input ) )
-            {
-                $err_msg = Lang::get('confide::confide.alerts.too_many_attempts');
-            }
-            elseif( $user->checkUserExists( $input ) and ! $user->isConfirmed( $input ) )
-            {
-                $err_msg = Lang::get('confide::confide.alerts.not_confirmed');
-            }
-            else
-            {
-                $err_msg = Lang::get('confide::confide.alerts.wrong_credentials');
-            }
-            if(Input::get('isAjax')){
-                echo $err_msg;
-                exit;
-            }else{
-                return Redirect::action('UserController@login')
-                            ->withInput(Input::except('password'))
-                ->with( 'error', $err_msg );
-            }*/
-        }
     }
 
     /**
@@ -274,8 +234,11 @@ class UserController extends Controller {
      */
     public function confirm( $code )
     {
-        if (!empty(User::where('confirmation_code',$code)->get()))
+        $Url = User::where('confirmation_code',$code)->first();
+         
+        if (!empty($Url))
         {
+            User::where('confirmation_code', $code)->update(array('confirmed'=>1));
             $notice_msg = "Your account has been confirmed! You may now login.";
                         return Redirect::action('UserController@login')
                             ->with( 'notice', $notice_msg );
@@ -294,9 +257,8 @@ class UserController extends Controller {
      */
     public function forgot_password()
     {
-        if( Confide::user() )
+        if( auth::user() )
         {
-
             // If user is logged, redirect to internal
             // page, change it to '/admin', '/dashboard' or something
             return Redirect::to('user/profile/dashboard');
@@ -306,7 +268,7 @@ class UserController extends Controller {
             $setting = new Setting();
             $recaptcha_publickey = $setting->getSetting('recaptcha_publickey','');
             $data['recaptcha_publickey']=$recaptcha_publickey;
-            return View::make(Config::get('confide::forgot_password_form'), $data);
+            return View('forgotpass',compact('data'));
         }
     }
 
@@ -316,7 +278,8 @@ class UserController extends Controller {
      */
     public function do_forgot_password()
     {
-        if( Confide::forgotPassword( Input::get( 'email' ) ) )
+
+        if( Auth::forgotPassword( Input::get( 'email' ) ) )
         {
             $notice_msg = Lang::get('confide::confide.alerts.password_forgot');
                         return Redirect::action('UserController@login')
@@ -347,6 +310,7 @@ class UserController extends Controller {
      */
     public function do_reset_password()
     {
+
         $input = array(
             'token'=>Input::get( 'token' ),
             'password'=>Input::get( 'password' ),
@@ -354,7 +318,7 @@ class UserController extends Controller {
         );
 
         // By passing an array with the token, password and confirmation
-        if( Confide::resetPassword( $input ) )
+        if( Auth::resetPassword( $input ) )
         {
             $notice_msg = Lang::get('confide::confide.alerts.password_reset');
                         return Redirect::action('UserController@login')
@@ -389,7 +353,7 @@ class UserController extends Controller {
      */
     public function checkCaptcha()
     {
-       
+
         require app_path().'/libraries/recaptchalib.php';
 
         $setting = new Setting();
@@ -422,11 +386,9 @@ class UserController extends Controller {
         $firstname = Input::get('firstname');
         $lastname = Input::get('lastname');
         $password = Input::get('password');
-
-        //$password2 = Input::get('password2');
-       /* $user = User::find((int)Confide::user()->id);*/
-         $user = User::find((int)Auth::user()->id);
-
+        
+        $user = User::find((int)Auth::user()->id);
+        
         if($password!='' && !Hash::check($password, Auth::user()->password)) {
             $update['password'] = Hash::make($password);
         }
@@ -843,7 +805,7 @@ class UserController extends Controller {
                     $address = $wallet->getNewDepositReceiveAddress($user->username);
                     UserAddressDeposit::insert(array('user_id' => $user->id, 'wallet_id' => $wallet->id, 'addr_deposit'=>$address));
                 }catch (Exception $e) {
-                    $data['error_message']= Lang::get('texts.not_connect_wallet'); //'Caught exception: '.$e->getMessage()."\n"; //
+                    $data['error_message'] = Lang::get('texts.not_connect_wallet'); //'Caught exception: '.$e->getMessage()."\n"; //
                 }
             }else $address = $addr_deposit->addr_deposit;
             $data['address_deposit'] = $address;
@@ -861,7 +823,7 @@ class UserController extends Controller {
             return Redirect::to('user/deposit/'.$wallet_id)->with('error',Lang::get('user_texts.notify_deposit_disable',array('coin'=>$wallet->name)));
         }
 
-        $user= Confide::user();
+        $user= Auth::user();
         $find_deposit= Deposit::where('user_id',$user->id)->where('wallet_id',$wallet_id)->where('paid',0)->where('created_at','>=',date('Y-m-d'))->first();
 
         if(isset($find_deposit->id)){
@@ -928,9 +890,9 @@ class UserController extends Controller {
                             ->with( 'notice', 'Sorry. Withdrawals are currently paused for this wallet.' ); //"Not connect to this wallet."
         }
 
-        $user = User::find((int)Confide::user()->id);
+        $user = User::find((int)Auth::user()->id);
         $balance = new Balance();
-        if(Hash::check($password, Confide::user()->password)) {
+        if(Hash::check($password, Auth::user()->password)) {
             $balance_amount = $balance->getBalance($wallet->id);
             $fee_withdraw = new FeeWithdraw();
             $fee=$fee_withdraw->getFeeWithdraw($wallet->id);
@@ -1099,7 +1061,7 @@ class UserController extends Controller {
             exit;
         }
         Log::info('------------------------- Do Cancel Withdraw -----------------------------');
-        $user = Confide::user();
+        $user = Auth::user();
         $withdraw_id = $_POST['withdraw_id'];
         $withdraw = Withdraw::find($withdraw_id);
         if($withdraw->user_id == $user->id){//this condition use to avoid case a user cancel order of other user
@@ -1115,6 +1077,7 @@ class UserController extends Controller {
 
 
     public function addWithdrawCurrency(){
+
         $amount = Input::get('amount');
         $address = Input::get('to_address');
         $wallet_id =Input::get('wallet_id');
@@ -1128,14 +1091,14 @@ class UserController extends Controller {
             return Redirect::to('user/withdraw/'.$wallet->id)
                             ->with( 'notice', 'Sorry. we pause function withdrawals' ); //"Not connect to this wallet."
         }
-        $user = Confide::user();
+        $user = Auth::user();
         $find_withdraw= Withdraw::where('user_id',$user->id)->where('wallet_id',$wallet_id)->where('status',0)->where('created_at','>=',date('Y-m-d'))->first();
         if(isset($find_withdraw->id)){
             return Redirect::to('user/withdraw/'.$wallet_id)->with('error',Lang::get('messages.you_withrdawed_today'));
         }
 
         $balance = new Balance();
-        if(Hash::check($password, Confide::user()->password)) {
+        if(Hash::check($password, Auth::user()->password)) {
             $balance_amount = $balance->getBalance($wallet->id);
             $method_withdraw = MethodWithdrawCurrency::find($method_id);
             $amount_fee = ($method_withdraw->wfee*$amount)/100;
@@ -1173,7 +1136,7 @@ class UserController extends Controller {
         }
     }
     public function referreredTradeKey(){
-        $user = Confide::user();
+        $user = Auth::user();
         $trade_key = Input::get('trade_key');
         $user_referred = User::where('trade_key',$trade_key)->first();
         if(isset($user_referred->username) && $user_referred->id!=$user->id){
@@ -1219,9 +1182,9 @@ class UserController extends Controller {
         $wallet = Wallet::find($wallet_id);
         $balance = new Balance();
 
-        $user=Confide::user();
+        $user=Auth::user();
         if(Hash::check($password, $user->password)) {
-            $user_receive = User::where('trade_key',$trade_key)->first();
+            $user_receive = Auth::where('trade_key',$trade_key)->first();
             $amount_balance=$balance->getBalance($wallet->id);
             if(!isset($user_receive->username)){
                 return Redirect::to('user/transfer-coin/'.$wallet->id)
@@ -1344,7 +1307,7 @@ class UserController extends Controller {
                     'remember' => 0,
                 );
                 //login
-                if ($c = Confide::logAttempt( $input, Config::get('confide::signup_confirm') ) )
+                if ($c = Auth::logAttempt( $input, Config::get('confide::signup_confirm') ) )
                 {
                     return Redirect::to('/');
                 }else{

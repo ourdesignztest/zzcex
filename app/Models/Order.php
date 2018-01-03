@@ -26,7 +26,7 @@ class Order extends Model
 					->orderBy('price', 'asc')
 					->first();		
 		return $order_sell;
-                   // return $order_sell =array();
+                   
     }
 
     /*
@@ -41,7 +41,7 @@ class Order extends Model
 					->orderBy('price', 'desc')
 					->first();
 		return $order_buy;
-                    //return $order_buy =array();
+            
     }
 
     /*
@@ -76,7 +76,7 @@ class Order extends Model
     */
     public function getCurrentOrdersUser($market_id,$user_id=''){
         if ( Auth::guest() ) return false;
-       // $user = Confide::user(); 
+        $user = Auth::user(); 
 
         if($user_id == '') $user_id = 203;
         $orders = Order::where('market_id', '=', $market_id)

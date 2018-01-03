@@ -1,12 +1,48 @@
 <?php
-class DepositController extends BaseController {
+
+namespace App\Http\Controllers;
+use Illuminate\Http\Request;
+use App\Models\User;
+use App\Models\Setting;
+use App\Models\Wallet;
+use App\Models\Market;
+use App\Models\WalletTimeLimitTrade;
+use App\Models\Balance;
+use App\Models\Order;
+use App\Models\FeeTrade;
+use App\Models\Trade;
+use App\Models\Post;
+use App\Models\Role;
+use App\Models\UserAddressDeposit;
+use App\Models\WalletLimitTrade;
+use App\Models\Withdraw;
+use App\Models\FeeWithdraw;
+use App\Models\UserInformation;
+use App\Models\Deposit;
+use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Input;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Illuminate\Support\Facades\Hash;
+use Lang;
+use Illuminate\Routing\UrlGenerator;
+use Config;
+use Session;
+use DB;
+use View;
+use Auth;
+use HTML;
+use Mail;
+
+
+class DepositController extends Controller {
 
     public function generateNewAddrDeposit()
     {
-        if( !Confide::user() ){
+        if( !Auth::user() ){
             return View::make(Config::get('confide::login_form'));
         }
-        $user = Confide::user();
+        $user = Auth::user();
         $user_id = $user->id;
         $wallet_id = $_POST['wallet_id'];
         $wallet = Wallet::find($wallet_id);

@@ -32,6 +32,8 @@
 				</div>
 		    @endif
 		    <form id="transferForm" class="form-horizontal" method="POST" action="{{{ URL::action('UserController@doTransfer') }}}">
+
+		     {{ csrf_field() }}
 		    	<table class="table table-striped noborder">
 		    		<tr>
 		    			<td>{{$current_coin}} Amount</td>
@@ -108,11 +110,9 @@
                 },
                 submitHandler: function(form) {
                     var challengeField = $("input#recaptcha_challenge_field").val();
-		            var responseField = $("input#recaptcha_response_field").val();
-
-		            var _token =  
+		            var responseField = $("input#recaptcha_response_field").val(); 
 		            console.log('responseField',responseField);
-		            $.post('<?php echo action('UserController@checkCaptcha')?>', {recaptcha_challenge_field: challengeField, recaptcha_response_field: responseField }, function(response){
+		            $.get('<?php echo action('UserController@checkCaptcha')?>', {recaptcha_challenge_field: challengeField, recaptcha_response_field: responseField }, function(response){
 		                if(response == 1)
 		                {
 		                	$('button[type=submit]').hide();

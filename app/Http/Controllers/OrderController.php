@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Input;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Setting;
@@ -21,7 +22,6 @@ use Auth;
 use HTML;
 use Config;
 use Cookie;
-use Illuminate\Support\Facades\Input;
 
 
 class OrderController extends Controller {

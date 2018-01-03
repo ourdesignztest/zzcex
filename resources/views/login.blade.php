@@ -32,7 +32,7 @@
               <input type="hidden" name="remember" value="0" >
               <input type="checkbox" name="remember" id="remember" value="1"/>
               <span class="check"></span>
-              {{{ Lang::get('confide::confide.login.remember') }}}
+             
             </div></div>
             <div class="col-md-6 text-center"><a href="<?=url('/user/forgot_password', $parameters = array(), $secure = null);?>">Forgot Password?</a></div>
           <p><div class="control-group text-center">
@@ -107,7 +107,7 @@
       var challengeField = $("input#recaptcha_challenge_field").val();
       var responseField = $("input#recaptcha_response_field").val();
       console.log('responseField',responseField);
-      $.post('<?php echo action('UserController@checkCaptcha')?>', {recaptcha_challenge_field: challengeField, recaptcha_response_field: responseField }, function(response){
+      $.get('<?php echo action('UserController@checkCaptcha')?>', {recaptcha_challenge_field: challengeField, recaptcha_response_field: responseField }, function(response){
           if(response == 1)
           {
             $('button[type=button]').hide();

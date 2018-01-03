@@ -62,13 +62,10 @@ class IndexController extends Controller {
     else $data['limit_week'] = 1000;
     //get amount : day
 
-   // $user = Confide::user();
+     $user = Auth::user();
 
-    $user = '1';
     if(isset($user)){
-
-     // $uid = $user->id;
-      $uid = '2';
+      $uid = $user->id;
       $select = "SELECT sum(t.to_value) as sumamount from orders t, market m where m.id=t.market_id and m.wallet_to=".$wallet_to." and t.user_id=".$uid." and t.created_at='".date("Y-m-d")."'";
       $selectsum = DB::select($select);
       $sumamount = $selectsum[0]->sumamount;
@@ -203,6 +200,7 @@ class IndexController extends Controller {
       $data['statistic_ltc']=DB::table('trade_history')->select(DB::raw('COUNT(*) as number_trade,SUM( amount * price ) AS total'))->where('created_at', '>=', $date)->whereIn('market_id', $all_market_ltc)->first();
     }
     $data['wallets']=Wallet::orderby('type')->get();
+
 
     return View::make('index',$data);
   }
