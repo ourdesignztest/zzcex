@@ -102,7 +102,7 @@ class RegisterController extends Controller
             //FOR VERIFY EMAIL
             
             $data_send=array('user' => $user);
-            $message ="Testing!!";
+            //$message ="Testing!!";
             Mail::send('emails.confirmEmail', $data_send, function($message) use ($user)
             {
               $message->to($user->email)->subject('Account Confirmation');
@@ -110,7 +110,7 @@ class RegisterController extends Controller
             });
 
             $data_send=array('user' => $user,'password'=>$password);
-            $message ="Testing!!";
+            //$message ="Testing!!";
 
             //FOR SEND PASSWORD
             Mail::send('emails.sendpass', $data_send, function($message) use ($user)
